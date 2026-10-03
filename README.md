@@ -34,14 +34,17 @@ erhalten.
 
 ## Installation
 
-Image unter **Releases** herunterladen, dann:
+Unter **Releases** die Datei für Ihren Server herunterladen –
+`fakturum-paid-<version>-amd64.tar.gz` für Intel/AMD,
+`fakturum-paid-<version>-arm64.tar.gz` für ARM (z. B. AWS Graviton,
+Apple Silicon). Danach ist alles gleich:
 
 ```bash
-docker load < fakturum-paid-<version>.tar.gz
+docker load < fakturum-paid-<version>-amd64.tar.gz
 
 docker run -d -p 8080:8080 \
   -v /pfad/zur/license.json:/app/license.json:ro \
-  corbum-fakturum-api:<version>-paid-amd64      # -paid-arm64 auf ARM
+  corbum-fakturum-api:<version>-paid
 
 curl http://localhost:8080/license/status       # zeigt den aktiven Plan
 ```
@@ -87,8 +90,9 @@ on your own servers – no cloud, no subscription, no per-document fees.
 
 **For developers and integrators:** a clean OpenAPI 3 contract with Swagger UI in every container, errors with official rule IDs and document positions, `/health` and `/license/status` for operations – and a partner program for system integrators who use Fakturum in client projects. Technical questions are answered directly by Fakturum's developer.
 
-**Install:** download `fakturum-paid-<version>.tar.gz` from **Releases**,
-`docker load` it and mount the license file you get from one of our sales
+**Install:** download `fakturum-paid-<version>-amd64.tar.gz` (Intel/AMD) or
+`-arm64.tar.gz` (ARM) from **Releases**, `docker load` it, run
+`corbum-fakturum-api:<version>-paid` and mount the license file you get from one of our sales
 partners as `/app/license.json`. Pro and Business are the same image –
 the license file decides which plan is active.
 

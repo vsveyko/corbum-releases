@@ -1,21 +1,13 @@
-<p align="center">
-  <img src="assets/logo.svg" alt="Corbum" width="96">
-</p>
+# Fakturum by Corbum
 
-<h1 align="center">Fakturum by Corbum</h1>
+**E-Rechnung. Selbst gehostet. Einfach.**
+XRechnung, ZUGFeRD und Factur-X prüfen, konvertieren und erzeugen – mit
+einer kleinen REST-API in Ihrem eigenen Netz.
 
-<p align="center">
-  <strong>E-Rechnung. Selbst gehostet. Einfach.</strong><br>
-  XRechnung, ZUGFeRD &amp; Factur-X prüfen, konvertieren und erzeugen –<br>
-  mit einer kleinen REST-API in Ihrem eigenen Netz.
-</p>
-
-<p align="center">
-  <a href="https://corbum.de/fakturum.html">Website</a> ·
-  <a href="https://corbum.de/fakturum.html#partner">Bezugsquellen</a> ·
-  <a href="https://hub.docker.com/r/vsveyko/corbum-fakturum-api">Free-Image auf Docker Hub</a> ·
-  <a href="#english">English</a>
-</p>
+[Website](https://corbum.de/fakturum.html) ·
+[Bezugsquellen](https://corbum.de/fakturum.html#partner) ·
+[Free-Image auf Docker Hub](https://hub.docker.com/r/vsveyko/corbum-fakturum-api) ·
+[English](#english)
 
 ---
 
@@ -26,12 +18,12 @@ ohne Abo.
 
 | | |
 | --- | --- |
-| ✅ **Offizielle Prüfregeln** | XSD + EN-16931- und XRechnung-Schematron der KoSIT – keine nachgebaute Annäherung |
-| 🔒 **Ihre Daten bleiben bei Ihnen** | Läuft vollständig offline. Keine Telemetrie, kein Lizenzserver, auch im abgeschotteten Netz |
-| 📦 **Ein Container, ~28 MB** | Ein statisches Go-Binary. Keine JVM, keine Datenbank – `linux/amd64` und `linux/arm64` |
-| ♾️ **Keine Kontingente** | Keine Gebühren pro Dokument, keine Rate-Limits |
-| 💶 **Einmal kaufen** | Kein Abo. Patches innerhalb Ihrer Version dauerhaft kostenlos |
-| 📖 **Swagger UI eingebaut** | Die vollständige API-Referenz liefert jeder Container unter `/docs` mit |
+| **Offizielle Prüfregeln** | XSD + EN-16931- und XRechnung-Schematron der KoSIT – keine nachgebaute Annäherung |
+| **Ihre Daten bleiben bei Ihnen** | Läuft vollständig offline. Keine Telemetrie, kein Lizenzserver, auch im abgeschotteten Netz |
+| **Ein Container, ~28 MB** | Ein statisches Go-Binary. Keine JVM, keine Datenbank – `linux/amd64` und `linux/arm64` |
+| **Keine Kontingente** | Keine Gebühren pro Dokument, keine Rate-Limits |
+| **Dauerhafte Lizenz** | Kein Abo, keine Laufzeit. Patches innerhalb Ihrer Version dauerhaft inklusive |
+| **Swagger UI eingebaut** | Die vollständige API-Referenz liefert jeder Container unter `/docs` mit |
 
 ## Pläne
 
@@ -42,7 +34,6 @@ ohne Abo.
 | UBL ⇄ CII konvertieren | | ✓ | ✓ |
 | XRechnung aus JSON erzeugen | | ✓ | ✓ |
 | Stapelverarbeitung per ZIP (bis 5.000 Dateien, CSV-Bericht) | | | ✓ |
-| Preis | kostenlos | 199 € einmalig (UVP) | 499 € einmalig (UVP) |
 | Image | Docker Hub | **diese Release-Seite** | **diese Release-Seite** |
 
 Lizenzen für Pro und Business erhalten Sie bei unseren
@@ -88,16 +79,14 @@ funktioniert offline).
 
 ## Updates
 
-- **Patches** (z. B. 1.0.0 → 1.0.9): kostenlos, erscheinen hier als neue Release – gleiche Lizenzdatei.
-- **Funktions-Updates** (z. B. 1.0 → 1.1): optional, pauschal 99 € (UVP), egal wie viele Versionen Sie überspringen.
+- **Patches** (z. B. 1.0.0 → 1.0.9): inklusive, erscheinen hier als neue Release – gleiche Lizenzdatei.
+- **Funktions-Updates** (z. B. 1.0 → 1.1): optional – Sie entscheiden, wann Sie wechseln, und können Versionen überspringen.
 - **Kein Abo**, nichts verlängert sich automatisch.
 
 Es gelten die [Lizenzbedingungen](https://corbum.de/lizenzbedingungen.html).
 Fragen: [info@corbum.de](mailto:info@corbum.de)
 
 ---
-
-<a id="english"></a>
 
 ## English
 
@@ -109,7 +98,7 @@ per-document fees.
 - **Official rules** – XSD plus the KoSIT EN 16931 and XRechnung Schematron.
 - **Your data stays with you** – fully offline, no telemetry, offline license check.
 - **One small container** – static Go binary, `linux/amd64` and `linux/arm64`.
-- **No quotas** and a **one-time price** – patches within your version are free forever.
+- **No quotas** and a **perpetual license** – no subscription, patches within your version included forever.
 - **Swagger UI built in** at `/docs`.
 
 | | Free | Pro | Business |
@@ -118,7 +107,6 @@ per-document fees.
 | ZUGFeRD / Factur-X PDF validation | | ✓ | ✓ |
 | Convert UBL ⇄ CII, generate XRechnung from JSON | | ✓ | ✓ |
 | Batch processing via ZIP (up to 5,000 files, CSV report) | | | ✓ |
-| Price | free | €199 one-time (RRP) | €499 one-time (RRP) |
 
 **Free:** `docker run -d -p 8080:8080 vsveyko/corbum-fakturum-api:free`
 
@@ -133,7 +121,4 @@ More: [corbum.de/fakturum](https://corbum.de/fakturum.html) ·
 
 ---
 
-<p align="center">
-  <img src="assets/fakturum.svg" alt="" width="24"><br>
-  <sub>Fakturum is part of <strong>Corbum</strong> – Engineering Regulatory Data.</sub>
-</p>
+Fakturum is part of **Corbum** – Engineering Regulatory Data.

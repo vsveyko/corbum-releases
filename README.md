@@ -49,6 +49,14 @@ curl http://localhost:8080/license/status       # zeigt den aktiven Plan
 Die vollständige API-Referenz: `http://localhost:8080/docs` (Swagger UI,
 funktioniert offline).
 
+## Für Entwickler und Integratoren
+
+- **Sauberer API-Vertrag** – OpenAPI 3 und Swagger UI in jedem Container, auch offline; Clients für Ihre Sprache generieren Sie direkt aus der Spezifikation.
+- **Fehler, mit denen man arbeiten kann** – jeder Verstoß mit offizieller Regel-ID, Business Term und Position im Dokument. Eine ungültige Rechnung ist ein normales Ergebnis, kein HTTP-Fehler.
+- **Betriebsfreundlich** – `/health` für Liveness- und Readiness-Probes, `/license/status` fürs Monitoring. Ein Lizenzproblem legt den Dienst nie lahm.
+- **Partnerschaft für Systemhäuser** – Sie setzen Fakturum in Kundenprojekten ein? Werden Sie Vertriebspartner und bieten Sie Integration und Lizenz aus einer Hand.
+- **Direkter Draht zum Entwickler** – technische Fragen zur Integration beantwortet der Entwickler von Fakturum selbst.
+
 ## Updates
 
 - **Patches** (z. B. 1.0.0 → 1.0.9): inklusive, erscheinen hier als neue Release – gleiche Lizenzdatei.
@@ -76,6 +84,8 @@ on your own servers – no cloud, no subscription, no per-document fees.
 | ZUGFeRD / Factur-X PDF validation | ✓ | ✓ |
 | Convert UBL ⇄ CII, generate XRechnung from JSON | ✓ | ✓ |
 | Batch processing via ZIP (up to 5,000 files, CSV report) | | ✓ |
+
+**For developers and integrators:** a clean OpenAPI 3 contract with Swagger UI in every container, errors with official rule IDs and document positions, `/health` and `/license/status` for operations – and a partner program for system integrators who use Fakturum in client projects. Technical questions are answered directly by Fakturum's developer.
 
 **Install:** download `fakturum-paid-<version>.tar.gz` from **Releases**,
 `docker load` it and mount the license file you get from one of our sales

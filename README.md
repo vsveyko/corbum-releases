@@ -11,6 +11,7 @@ kleiner Docker-Container – ohne Java-Toolchain, ohne Cloud, ohne Abo.
 | | |
 | --- | --- |
 | **Offizielle Prüfregeln** | XSD + EN-16931- und XRechnung-Schematron der KoSIT – keine nachgebaute Annäherung |
+| **Passt in Ihr ERP** | Schlichte HTTP-API: ERP, Warenwirtschaft, Rechnungseingang, Shop oder Buchhaltung binden Fakturum mit einem Aufruf ein – in jeder Programmiersprache |
 | **Ihre Daten bleiben bei Ihnen** | Läuft vollständig offline. Keine Telemetrie, kein Lizenzserver, auch im abgeschotteten Netz |
 | **Ein kleiner Container** | Ein statisches Go-Binary. Keine JVM, keine Datenbank – `linux/amd64` und `linux/arm64` |
 | **Keine Kontingente** | Keine Gebühren pro Dokument, keine Rate-Limits |
@@ -63,6 +64,7 @@ funktioniert offline).
 on your own servers – no cloud, no subscription, no per-document fees.
 
 - **Official rules** – XSD plus the KoSIT EN 16931 and XRechnung Schematron.
+- **Fits into your ERP** – a plain HTTP API: ERP, inventory, incoming-invoice workflows, shops or accounting call it directly, from any language.
 - **Your data stays with you** – fully offline, no telemetry, offline license check.
 - **One small container** – static Go binary, `linux/amd64` and `linux/arm64`.
 - **No quotas** and a **perpetual license** – no subscription, patches within your version included forever.

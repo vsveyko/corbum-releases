@@ -14,6 +14,7 @@ kleiner Docker-Container – ohne Java-Toolchain, ohne Cloud, ohne Abo.
 | **Passt in Ihr ERP** | Schlichte HTTP-API: ERP, Warenwirtschaft, Rechnungseingang, Shop oder Buchhaltung binden Fakturum mit einem Aufruf ein – in jeder Programmiersprache |
 | **Ihre Daten bleiben bei Ihnen** | Läuft vollständig offline. Keine Telemetrie, kein Lizenzserver, auch im abgeschotteten Netz |
 | **Ein kleiner Container** | Ein statisches Go-Binary. Keine JVM, keine Datenbank – `linux/amd64` und `linux/arm64` |
+| **Sicher zu betreiben** | Läuft ohne root, ohne ausgehende Verbindungen, ohne Datenbank; Dokumente werden nur im Arbeitsspeicher verarbeitet und nie protokolliert – Details im Abschnitt „Sicherheit und Betrieb“ |
 | **Keine Kontingente** | Keine Gebühren pro Dokument, keine Rate-Limits |
 | **Dauerhafte Lizenz** | Kein Abo, keine Laufzeit. Patches innerhalb Ihrer Version dauerhaft inklusive |
 | **Swagger UI eingebaut** | Die vollständige API-Referenz liefert jeder Container unter `/docs` mit |
@@ -60,6 +61,23 @@ funktioniert offline).
 - **Partnerschaft für Systemhäuser** – Sie setzen Fakturum in Kundenprojekten ein? Werden Sie Vertriebspartner und bieten Sie Integration und Lizenz aus einer Hand.
 - **Direkter Draht zum Entwickler** – technische Fragen zur Integration beantwortet der Entwickler von Fakturum selbst.
 
+## Sicherheit und Betrieb
+
+- **Keine eingebaute Authentifizierung.** Betreiben Sie den Container im
+  privaten Netz hinter Ihrem eigenen Reverse-Proxy oder API-Gateway und
+  geben Sie den Port nicht ins Internet frei.
+- **Kein Internetzugang nötig.** Regeln, API-Dokumentation und
+  Lizenzprüfung sind eingebaut; ausgehende Verbindungen können Sie
+  komplett sperren.
+- **Ab Version 1.0.10:** das Image enthält nur das Programm – kein
+  Betriebssystem, keine Shell (Schwachstellenscan ohne Befund); Schutz
+  gegen übergroße und bösartige Dokumente (extrem komplexe XML, ZIP-Bomben
+  im Stapel) mit klaren Fehlermeldungen; jede Release enthält
+  `SHA256SUMS`, eine SBOM und `RUNNING.md` mit gehärtetem Start,
+  Speicher-Empfehlungen und allen Einstellungen.
+- **Schwachstelle gefunden?** Bitte nicht öffentlich melden – siehe die
+  Datei `SECURITY.md` in diesem Repository.
+
 ## Updates
 
 - **Patches** (z. B. 1.0.0 → 1.0.9): inklusive, erscheinen hier als neue Release – gleiche Lizenzdatei.
@@ -80,6 +98,7 @@ on your own servers – no cloud, no subscription, no per-document fees.
 - **One small container** – static Go binary, `linux/amd64` and `linux/arm64`.
 - **No quotas** and a **perpetual license** – no subscription, patches within your version included forever.
 - **Swagger UI built in** at `/docs`.
+- **Safe to operate** – runs as non-root, makes no outbound connections, processes documents in memory only and never logs them. There is no built-in authentication: run it on a private network behind your own gateway. From 1.0.10 the image contains nothing but the program (no OS, no shell), is protected against oversized and hostile documents, and every release ships `SHA256SUMS`, an SBOM and `RUNNING.md`. Report vulnerabilities privately – see `SECURITY.md` in this repository.
 
 | | Pro | Business |
 | --- | :---: | :---: |

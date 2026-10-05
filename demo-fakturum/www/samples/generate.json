@@ -1,0 +1,53 @@
+{
+  "format": "xrechnung-ubl",
+  "invoice": {
+    "number": "RE-2026-0042",
+    "issueDate": "2026-10-05",
+    "deliveryDate": "2026-10-01",
+    "dueDate": "2026-11-04",
+    "paymentTerms": "Zahlbar innerhalb von 30 Tagen netto",
+    "businessProcess": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
+    "paymentMeansCode": "58",
+    "payeeIban": "DE89370400440532013000",
+    "seller": {
+      "name": "Muster Software GmbH",
+      "vatId": "DE123456789",
+      "street": "Musterstraße 1",
+      "city": "Berlin",
+      "postalCode": "10115",
+      "country": "DE",
+      "electronicAddress": "rechnung@muster-software.example",
+      "electronicAddressScheme": "EM",
+      "contactName": "Erika Muster",
+      "contactPhone": "+49 30 1234567",
+      "contactEmail": "buchhaltung@muster-software.example"
+    },
+    "buyer": {
+      "name": "Beispiel AG",
+      "street": "Kundenweg 2",
+      "city": "München",
+      "postalCode": "80331",
+      "country": "DE",
+      "electronicAddress": "eingang@beispiel-ag.example",
+      "electronicAddressScheme": "EM",
+      "leitwegId": "04011000-12345-34"
+    },
+    "lineItems": [
+      {
+        "description": "Beratung",
+        "quantity": 10,
+        "unitPrice": 150,
+        "unitCode": "HUR",
+        "taxCategory": "S",
+        "taxRate": 19
+      },
+      {
+        "description": "Software-Lizenz",
+        "quantity": 1,
+        "unitPrice": 490,
+        "taxCategory": "S",
+        "taxRate": 19
+      }
+    ]
+  }
+}

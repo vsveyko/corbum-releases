@@ -1,0 +1,25 @@
+{
+	admin off
+	auto_https off
+}
+
+:80 {
+	# The page's API calls: /api/validate is answered by the container's /validate.
+	# Same origin as the page, so the container needs no CORS settings.
+	handle_path /api/* {
+		reverse_proxy fakturum:8080
+	}
+
+	# The container's own reference pages use absolute paths, so they are
+	# passed through as they are.
+	@reference path /docs /docs/* /openapi.yaml
+	handle @reference {
+		reverse_proxy fakturum:8080
+	}
+
+	# Everything else is the demo page itself.
+	handle {
+		root * /srv
+		file_server
+	}
+}

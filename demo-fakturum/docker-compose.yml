@@ -1,0 +1,41 @@
+# Fakturum local demo: the container plus a small web server that serves the
+# demo page and forwards its API calls. Everything stays on this machine.
+#
+#   docker compose up -d            # Free image, validation only
+#   open http://localhost:8081
+#
+# With a license: load the downloaded image, put license.json into ./license
+# and start with that image (see README.md):
+#   FAKTURUM_IMAGE=corbum-fakturum-api:<version>-paid docker compose up -d
+name: fakturum-demo
+
+services:
+  fakturum:
+    image: ${FAKTURUM_IMAGE:-vsveyko/corbum-fakturum-api:free}
+    # The hardened settings recommended for real deployments (RUNNING.md):
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 2g
+    pids_limit: 256
+    volumes:
+      # The container reads /app/license.json. A missing file just means Free.
+      - ./license:/app:ro
+    networks: [demo]
+    # No "ports:" on purpose — Fakturum has no login, so only the web server
+    # below can reach it.
+
+  web:
+    image: caddy:2-alpine
+    ports:
+      # Loopback only: the demo is for this machine, not for the network.
+      - "127.0.0.1:${DEMO_PORT:-8081}:80"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./www:/srv:ro
+    depends_on: [fakturum]
+    networks: [demo]
+
+networks:
+  demo: {}

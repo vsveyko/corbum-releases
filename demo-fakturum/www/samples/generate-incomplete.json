@@ -1,0 +1,41 @@
+{
+  "format": "xrechnung-ubl",
+  "invoice": {
+    "number": "RE-2026-0043",
+    "issueDate": "2026-10-05",
+    "deliveryDate": "2026-10-01",
+    "seller": {
+      "name": "Muster Software GmbH",
+      "vatId": "DE123456789",
+      "street": "Musterstraße 1",
+      "city": "Berlin",
+      "postalCode": "10115",
+      "country": "DE"
+    },
+    "buyer": {
+      "name": "Beispiel AG",
+      "street": "Kundenweg 2",
+      "city": "München",
+      "postalCode": "80331",
+      "country": "DE",
+      "leitwegId": "04011000-12345-34"
+    },
+    "lineItems": [
+      {
+        "description": "Beratung",
+        "quantity": 10,
+        "unitPrice": 150,
+        "unitCode": "HUR",
+        "taxCategory": "S",
+        "taxRate": 19
+      },
+      {
+        "description": "Software-Lizenz",
+        "quantity": 1,
+        "unitPrice": 490,
+        "taxCategory": "S",
+        "taxRate": 19
+      }
+    ]
+  }
+}

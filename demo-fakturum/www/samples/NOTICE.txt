@@ -1,0 +1,21 @@
+Sample documents used by the Fakturum local demo
+
+valid-ubl.xml, valid-cii.xml
+  Unmodified official XRechnung example invoices (01.05a-INVOICE_ubl.xml and
+  01.05a-INVOICE_uncefact.xml) from the KoSIT test suite,
+  https://github.com/itplr-kosit/xrechnung-testsuite, Apache License 2.0.
+
+invalid-currency.xml, invalid-no-buyer-reference.xml
+  The valid-ubl.xml invoice with exactly one change each, made on purpose to
+  show validation errors: the currency code replaced by the non-existent
+  "XYZ", and the buyer reference element removed.
+
+zugferd.pdf
+  Unmodified ZUGFeRD 2.3 example EN16931_Einfach.pdf from the Mustangproject,
+  https://github.com/ZUGFeRD/mustangproject, Apache License 2.0.
+
+generate.json, generate-incomplete.json
+  Invented example data (fictional companies) for the generate endpoint. The
+  incomplete variant leaves out the fields the checks ask for, on purpose.
+
+Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0

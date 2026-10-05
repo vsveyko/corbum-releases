@@ -61,6 +61,14 @@ funktioniert offline).
 - **Partnerschaft für Systemhäuser** – Sie setzen Fakturum in Kundenprojekten ein? Werden Sie Vertriebspartner und bieten Sie Integration und Lizenz aus einer Hand.
 - **Direkter Draht zum Entwickler** – technische Fragen zur Integration beantwortet der Entwickler von Fakturum selbst.
 
+## Lokale Demo für Integratoren
+
+Im Ordner `demo-fakturum` dieses Repositories liegt eine kleine Demo-Seite,
+die neben Ihrem eigenen Container läuft: Rechnungen prüfen, konvertieren,
+erzeugen und als Stapel verarbeiten – mit dem passenden curl-, Python- und
+Node.js-Code zum Kopieren. Alles bleibt auf Ihrem Rechner;
+`docker compose up -d` genügt (die Seite ist englisch).
+
 ## Sicherheit und Betrieb
 
 - **Keine eingebaute Authentifizierung.** Betreiben Sie den Container im
@@ -99,6 +107,7 @@ on your own servers – no cloud, no subscription, no per-document fees.
 - **No quotas** and a **perpetual license** – no subscription, patches within your version included forever.
 - **Swagger UI built in** at `/docs`.
 - **Safe to operate** – runs as non-root, makes no outbound connections, processes documents in memory only and never logs them. There is no built-in authentication: run it on a private network behind your own gateway. From 1.0.10 the image contains nothing but the program (no OS, no shell), is protected against oversized and hostile documents, and every release ships `SHA256SUMS`, an SBOM and `RUNNING.md`. Report vulnerabilities privately – see `SECURITY.md` in this repository.
+- **Try it locally** – the `demo-fakturum` folder holds a small demo page that runs next to your own container (validate, convert, generate, batch, with copyable curl/Python/Node.js code); `docker compose up -d` is all it takes.
 
 | | Pro | Business |
 | --- | :---: | :---: |

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fakturum – local demo</title>
+  <link rel="stylesheet" href="demo.css">
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><strong>Fakturum</strong><span>local demo</span></div>
+    <div id="status" class="status" role="status" aria-live="polite">Connecting to your container…</div>
+  </header>
+
+  <main>
+    <p class="intro">
+      This page talks only to <em>your own</em> Fakturum container on this machine — nothing leaves it.
+      Pick an endpoint, send a sample (or your own invoice) and copy the matching code into your integration.
+    </p>
+    <div id="notice" class="notice" hidden></div>
+    <nav id="tabs" role="tablist" aria-label="Endpoints"></nav>
+    <section id="panel" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    <span>Interactive API reference of your container: <a href="docs" target="_blank" rel="noopener">/docs</a></span>
+    <span>Sample invoices: see <a href="samples/NOTICE.txt">samples/NOTICE.txt</a></span>
+  </footer>
+
+  <script src="demo.js"></script>
+</body>
+</html>

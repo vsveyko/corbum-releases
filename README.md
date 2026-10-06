@@ -19,6 +19,19 @@ kleiner Docker-Container – ohne Java-Toolchain, ohne Cloud, ohne Abo.
 | **Dauerhafte Lizenz** | Kein Abo, keine Laufzeit. Patches innerhalb Ihrer Version dauerhaft inklusive |
 | **Swagger UI eingebaut** | Die vollständige API-Referenz liefert jeder Container unter `/docs` mit |
 
+## Kostenlos testen
+
+Die XML-Prüfung (XRechnung UBL und CII, mit denselben offiziellen Regeln)
+ist kostenlos und ohne Limits – ohne Lizenz, ohne Registrierung:
+
+```bash
+docker run -d -p 8080:8080 vsveyko/corbum-fakturum-api:free
+```
+
+Dann `http://localhost:8080/docs` im Browser öffnen und eine Rechnung
+prüfen. Oder die lokale Demo starten (siehe unten), die zeigt auch, was
+Pro und Business können.
+
 ## Pro und Business
 
 | | **Pro** | **Business** |
@@ -106,6 +119,7 @@ on your own servers – no cloud, no subscription, no per-document fees.
 - **One small container** – static Go binary, `linux/amd64` and `linux/arm64`.
 - **No quotas** and a **perpetual license** – no subscription, patches within your version included forever.
 - **Swagger UI built in** at `/docs`.
+- **Try it free** – XML validation (XRechnung UBL and CII, same official rules) is free with no limits, no license, no sign-up: `docker run -d -p 8080:8080 vsveyko/corbum-fakturum-api:free`, then open `http://localhost:8080/docs`.
 - **Safe to operate** – runs as non-root, makes no outbound connections, processes documents in memory only and never logs them. There is no built-in authentication: run it on a private network behind your own gateway. From 1.0.10 the image contains nothing but the program (no OS, no shell), is protected against oversized and hostile documents, and every release ships `SHA256SUMS`, an SBOM and `RUNNING.md`. Report vulnerabilities privately – see `SECURITY.md` in this repository.
 - **Try it locally** – the `demo-fakturum` folder holds a small demo page that runs next to your own container (validate, convert, generate, batch, with copyable curl/Python/Node.js code); `docker compose up -d` is all it takes.
 

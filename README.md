@@ -127,4 +127,4 @@ the license file decides which plan is active.
 ---
 
 Fakturum is part of **Corbum** – Engineering Regulatory Data.
-More: [corbum.de](https://corbum.de/fakturum.html)
+Fragen zu Lizenz, Vertriebspartnern oder Integration / Questions about licenses, sales partners or integration: **info@corbum.de**

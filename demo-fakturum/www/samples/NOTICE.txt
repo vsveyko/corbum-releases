@@ -14,8 +14,13 @@ zugferd.pdf
   Unmodified ZUGFeRD 2.3 example EN16931_Einfach.pdf from the Mustangproject,
   https://github.com/ZUGFeRD/mustangproject, Apache License 2.0.
 
-generate.json, generate-incomplete.json
+generate.json, generate-incomplete.json, generate-kleinunternehmer.json
   Invented example data (fictional companies) for the generate endpoint. The
   incomplete variant leaves out the fields the checks ask for, on purpose.
+
+rechnung-ohne-xml.pdf, rechnung-ohne-xml.ai-answer.json
+  An invented invoice (fictional companies, example IBAN and VAT ID) as a
+  plain PDF without embedded XML, and the answer an AI assistant should give
+  for it with ../ai/prompt.md, for the "PDF -> XRechnung (AI)" tab.
 
 Apache License 2.0: https://www.apache.org/licenses/LICENSE-2.0

@@ -1,0 +1,8 @@
+# Never convert line endings in binary files (a PDF made only of ASCII
+# would otherwise be treated as text and get its byte offsets broken).
+*.pdf binary
+*.png binary
+*.jpg binary
+*.gz binary
+*.zip binary
+*.woff2 binary

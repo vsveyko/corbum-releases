@@ -1,0 +1,54 @@
+{
+  "format": "xrechnung-ubl",
+  "invoice": {
+    "number": "2026-017",
+    "issueDate": "2026-11-05",
+    "dueDate": "2026-11-19",
+    "paymentTerms": "Zahlbar bis 19.11.2026 ohne Abzug.",
+    "businessProcess": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
+    "paymentMeansCode": "58",
+    "payeeIban": "DE89370400440532013000",
+    "seller": {
+      "name": "Lena Beispiel Grafikdesign",
+      "identifier": "Lieferant 70031",
+      "taxNumber": "231/123/45678",
+      "street": "Gartenstr. 3",
+      "city": "Leipzig",
+      "postalCode": "04107",
+      "country": "DE",
+      "electronicAddress": "lena@grafik-beispiel.example",
+      "electronicAddressScheme": "EM",
+      "contactName": "Lena Beispiel",
+      "contactPhone": "0341 7654321",
+      "contactEmail": "lena@grafik-beispiel.example"
+    },
+    "buyer": {
+      "name": "Bäckerei Sonnenschein GmbH",
+      "leitwegId": "B-2026-118",
+      "street": "Hauptstraße 5",
+      "city": "Leipzig",
+      "postalCode": "04103",
+      "country": "DE",
+      "electronicAddress": "buchhaltung@sonnenschein.example",
+      "electronicAddressScheme": "EM"
+    },
+    "lineItems": [
+      {
+        "description": "Logo-Entwurf",
+        "quantity": 1,
+        "unitCode": "LS",
+        "unitPrice": 480,
+        "taxCategory": "E",
+        "taxRate": 0,
+        "periodStart": "2026-10-20",
+        "periodEnd": "2026-10-20"
+      }
+    ],
+    "taxExemptions": [
+      {
+        "taxCategory": "E",
+        "reason": "Kein Ausweis von Umsatzsteuer, da Kleinunternehmer gemäß § 19 UStG"
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "generateRequest": {
+    "invoice": {
+      "number": "2026-0815",
+      "issueDate": "2026-11-05",
+      "dueDate": "2026-11-19",
+      "paymentTerms": "Bitte überweisen Sie den Rechnungsbetrag ohne Abzug bis zum 19.11.2026 unter Angabe der Rechnungsnummer auf das unten genannte Konto.",
+      "businessProcess": "urn:fdc:peppol.eu:2017:poacc:billing:01:1.0",
+      "paymentMeansCode": "58",
+      "payeeIban": "DE89370400440532013000",
+      "seller": {
+        "name": "Webstudio Beispiel",
+        "vatId": "DE123456789",
+        "street": "Lindenweg 12",
+        "city": "Leipzig",
+        "postalCode": "04109",
+        "country": "DE",
+        "electronicAddress": "rechnung@webstudio-beispiel.example",
+        "electronicAddressScheme": "EM",
+        "contactName": "Anna Beispiel",
+        "contactPhone": "0341 1234567",
+        "contactEmail": "rechnung@webstudio-beispiel.example"
+      },
+      "buyer": {
+        "name": "Bäckerei Sonnenschein GmbH",
+        "leitwegId": "B-2026-117",
+        "street": "Hauptstraße 5",
+        "city": "Leipzig",
+        "postalCode": "04103",
+        "country": "DE",
+        "contactName": "Max Mustermann"
+      },
+      "lineItems": [
+        {
+          "description": "Website-Wartung Oktober 2026 (Updates, Backups, Monitoring)",
+          "quantity": 1,
+          "unitCode": "LS",
+          "unitPrice": 290.00,
+          "taxCategory": "S",
+          "taxRate": 19,
+          "periodStart": "2026-10-01",
+          "periodEnd": "2026-10-31"
+        },
+        {
+          "description": "Einbau Online-Bestellformular",
+          "quantity": 3.5,
+          "unitCode": "HUR",
+          "unitPrice": 85.00,
+          "taxCategory": "S",
+          "taxRate": 19,
+          "periodStart": "2026-10-14",
+          "periodEnd": "2026-10-14"
+        },
+        {
+          "description": "Hosting-Paket \"Business\" inkl. Domain sonnenschein-backt.example",
+          "quantity": 12,
+          "unitCode": "MON",
+          "unitPrice": 14.90,
+          "taxCategory": "S",
+          "taxRate": 19,
+          "periodStart": "2026-11-01",
+          "periodEnd": "2027-10-31"
+        }
+      ]
+    },
+    "format": "xrechnung-ubl"
+  },
+  "review": {
+    "missing": [
+      "The buyer's e-mail address is not on the invoice. XRechnung requires an electronic address for the buyer (rule PEPPOL-EN16931-R010). Please add the address where Bäckerei Sonnenschein GmbH receives invoices."
+    ],
+    "assumptions": [
+      "Buyer reference: the invoice has no Leitweg-ID, so the order number B-2026-117 is used (customer number 10442 would be the alternative).",
+      "Seller contact person: Anna Beispiel, named as owner (Inh.) in the letterhead.",
+      "Line 2 was performed on a single day (14.10.2026), so its period starts and ends on that date.",
+      "IBAN written without spaces."
+    ],
+    "unsupported": [],
+    "totals": {
+      "invoice": { "net": 766.30, "vat": 145.60, "gross": 911.90 },
+      "calculated": { "net": 766.30, "vat": 145.60, "gross": 911.90 }
+    }
+  }
+}

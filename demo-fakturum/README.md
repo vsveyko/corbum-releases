@@ -45,7 +45,7 @@ You should see the page with two chips in the top right corner:
 
 ## 3. Take the five-minute tour
 
-The page has four tabs. Each has a **Request** on the left, the **Response**
+The page has five tabs. Each has a **Request** on the left, the **Response**
 on the right, and a **"Use it in your code"** box below with the exact call as
 `curl`, Python and Node.js (use the **Copy** button).
 
@@ -84,6 +84,62 @@ The box holds a JSON invoice: seller, buyer, line items, VAT. Press
 
 A `200` from this endpoint means "generated"; whether the result is also
 compliant is in `valid` / `errors`. Always check them.
+
+### PDF → XRechnung with an AI assistant (Pro)
+
+For invoices that only exist as an ordinary PDF (written in Word, exported
+from an old program, received from a supplier). An AI assistant reads the PDF
+and types the data in; Fakturum turns it into an XRechnung and checks it
+against the official rules. A person checks what the AI wasn't sure about.
+
+1. Press **Copy prompt** (or **Download prompt**). The prompt is also in this
+   folder as `www/ai/prompt.md`.
+2. Open the AI assistant you're allowed to use for invoices, attach the PDF,
+   paste the prompt and send it. To try it first, use **Sample PDF to try**,
+   an invented invoice without any embedded XML.
+3. Paste the AI's answer into the box and press **Check and generate
+   XRechnung**. **Load the example answer** shows what a correct answer for
+   the sample PDF looks like.
+4. Read the result:
+   - **Missing on the invoice** lists what an XRechnung needs that the PDF
+     doesn't show. In the sample, that's the buyer's e-mail address. The AI
+     leaves it out instead of inventing one, so Fakturum reports the rule
+     `PEPPOL-EN16931-R010`. Add the real address to the JSON and generate
+     again: the result is **VALID**.
+   - **What the AI converted or chose** lists every decision it made, for
+     example which number it used as the buyer reference. Check them.
+   - **TOTALS MATCH / DIFFER** compares the invoice's totals with the
+     recalculated ones.
+   - **Copy follow-up for the AI** builds a message with Fakturum's findings
+     for the same chat. The AI then fixes what the PDF supports and lists the
+     rest.
+
+The answer has two parts: `generateRequest`, which is exactly the body for
+`POST /generate`, and `review`. The "Use it in your code" box shows how to
+automate the same round trip.
+
+Good to know:
+
+- **Data protection.** The PDF goes to your AI provider, not through this
+  page. Use a provider your data protection rules allow for invoices (with a
+  data processing agreement), or a model that runs on your own hardware.
+  Fakturum itself makes no outbound connections.
+- **The AI types, a person decides.** The prompt forbids invented values, but
+  an AI can still misread a number. The totals check and the official rules
+  catch most of that, not all of it. Read the review before sending an
+  invoice.
+- **Already an e-invoice?** If the PDF is a ZUGFeRD / Factur-X invoice, its
+  data is already inside. Validate it in the Validate tab instead of retyping
+  it.
+- **Invoices without VAT** work too: Kleinunternehmer under § 19 UStG,
+  reverse charge, tax-exempt and intra-community supplies. The AI copies the
+  invoice's own exemption sentence and the Steuernummer. A Kleinunternehmer
+  without a VAT ID also needs a seller identifier, for example the supplier
+  number the customer assigned. If the invoice doesn't show one, the review
+  says so.
+- **Not convertible this way yet:** direct debit, and invoices that are
+  already paid. The prompt has the AI stop and say so instead of producing a
+  wrong XRechnung.
 
 ### Batch (Business)
 

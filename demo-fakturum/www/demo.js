@@ -19,7 +19,12 @@ const PDF_SAMPLE = { label: "ZUGFeRD PDF with embedded XML (Pro)", url: "samples
 const GEN_SAMPLES = [
   { label: "Complete invoice", url: "samples/generate.json", name: "generate.json" },
   { label: "Incomplete invoice (shows what the checks report)", url: "samples/generate-incomplete.json", name: "generate-incomplete.json" },
+  { label: "Kleinunternehmer (§ 19 UStG, no VAT)", url: "samples/generate-kleinunternehmer.json", name: "generate-kleinunternehmer.json" },
 ];
+
+const AI_PROMPT_URL = "ai/prompt.md";
+const AI_SAMPLE_PDF = { url: "samples/rechnung-ohne-xml.pdf", name: "rechnung-ohne-xml.pdf" };
+const AI_SAMPLE_ANSWER = { url: "samples/rechnung-ohne-xml.ai-answer.json" };
 
 const state = { plan: "free", reachable: false };
 
@@ -252,6 +257,53 @@ const result = await r.json();
 console.log(result.valid, result.errors.map((e) => e.code));
 writeFileSync("xrechnung.xml", Buffer.from(result.document, "base64"));`,
   },
+  ai: {
+    curl: `# answer.json = what the AI returned for the PDF + prompt (ai/prompt.md)
+jq '.review' answer.json                      # read this first: missing / assumptions
+jq '.generateRequest' answer.json \\
+  | curl -s -X POST ${BASE}/generate -H "Content-Type: application/json" -d @- \\
+  | tee response.json | jq '{valid, errors: [.errors[] | "\\(.code): \\(.message)"]}'
+jq -r .document response.json | base64 -d > xrechnung.xml`,
+    python: `import base64, json, requests
+
+PROMPT = open("fakturum-ai-prompt.md", encoding="utf-8").read()
+
+def ask_ai(messages, pdf_bytes):
+    """Call the AI provider you are allowed to use; return its text answer."""
+    raise NotImplementedError
+
+pdf = open("rechnung.pdf", "rb").read()
+messages = [PROMPT]
+for attempt in range(3):                      # at most 3 rounds, then a person decides
+    answer = json.loads(ask_ai(messages, pdf).strip().strip("\`").removeprefix("json"))
+    if answer["generateRequest"] is None:     # e.g. Kleinunternehmer: not convertible
+        break
+    r = requests.post("${BASE}/generate", json=answer["generateRequest"]).json()
+    if r["valid"] and not r["warnings"]:
+        break
+    issues = "\\n".join(f'- {i["code"]}: {i["message"]}' for i in r["errors"] + r["warnings"])
+    messages.append(f"Fakturum reported:\\n{issues}\\nFix what the invoice supports, "
+                    "list the rest under review.missing, answer in the same JSON format.")
+
+print(json.dumps(answer["review"], indent=2, ensure_ascii=False))  # a person reads this
+if answer["generateRequest"] is not None:
+    open("xrechnung.xml", "wb").write(base64.b64decode(r["document"]))`,
+    node: `import { readFileSync, writeFileSync } from "node:fs";
+
+// answer.json = what the AI returned for the PDF + prompt (ai/prompt.md)
+const answer = JSON.parse(readFileSync("answer.json", "utf8"));
+console.log(answer.review);                   // a person reads this first
+if (answer.generateRequest) {
+  const r = await fetch("${BASE}/generate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(answer.generateRequest),
+  });
+  const result = await r.json();
+  console.log(result.valid, result.errors.map((e) => \`\${e.code}: \${e.message}\`));
+  writeFileSync("xrechnung.xml", Buffer.from(result.document, "base64"));
+}`,
+  },
   batch: {
     curl: `curl -s -X POST ${BASE}/batch \\
   -F "file=@invoices.zip" -F "operation=validate" -F "output=both"
@@ -425,6 +477,118 @@ function generateTab() {
     codeCard("generate"));
 }
 
+// ---------- PDF → XRechnung with an AI assistant ----------
+
+// The AI's answer is { generateRequest, review } (see ai/prompt.md). Accept it
+// with or without a ```json fence or chatter around it, or a bare request.
+function parseAIAnswer(text) {
+  const start = text.indexOf("{");
+  const end = text.lastIndexOf("}");
+  if (start < 0 || end < start) throw new Error("No JSON object found in the answer.");
+  const obj = JSON.parse(text.slice(start, end + 1));
+  if ("generateRequest" in obj || "review" in obj) return { request: obj.generateRequest, review: obj.review || {} };
+  return { request: obj, review: {} };
+}
+
+function reviewView(review) {
+  const out = [];
+  const list = (title, items, cls) => items && items.length
+    ? [h("h2", { style: "margin-top:12px" }, title), h("ul", { class: "review " + cls }, items.map((i) => h("li", {}, i)))]
+    : [];
+  out.push(...list("Stops the conversion", review.unsupported, "bad"));
+  out.push(...list("Missing on the invoice: ask for it, don't invent it", review.missing, "warn"));
+  out.push(...list("What the AI converted or chose: check it", review.assumptions, ""));
+  const t = review.totals;
+  if (t && t.invoice && t.calculated) {
+    const same = ["net", "vat", "gross"].every((k) => Math.abs((t.invoice[k] || 0) - (t.calculated[k] || 0)) < 0.015);
+    out.push(h("p", { class: "meta" },
+      h("span", { class: "verdict " + (same ? "valid" : "invalid") }, same ? "TOTALS MATCH" : "TOTALS DIFFER"),
+      ` invoice ${t.invoice.gross} · recalculated ${t.calculated.gross} (gross)`));
+  }
+  return out;
+}
+
+// What to send back to the AI when Fakturum still finds something (prompt §6).
+function followUp(body) {
+  const lines = [...body.errors, ...body.warnings].map((i) => `- ${i.severity} ${i.code}: ${i.message}`);
+  return "Fakturum checked your generateRequest and reported:\n" + lines.join("\n") +
+    "\n\nFix what the invoice supports, list the rest under review.missing (never invent values), and answer again in the same JSON format.";
+}
+
+function aiTab() {
+  const promptText = fetch(AI_PROMPT_URL).then((r) => r.text());
+  const copyPrompt = h("button", { class: "small", type: "button" }, "Copy prompt");
+  copyPrompt.addEventListener("click", async () => {
+    await navigator.clipboard.writeText(await promptText);
+    copyPrompt.textContent = "Copied ✓";
+    setTimeout(() => { copyPrompt.textContent = "Copy prompt"; }, 1500);
+  });
+  const promptPre = h("pre", {});
+  promptText.then((t) => { promptPre.textContent = t; });
+
+  const answer = h("textarea", { spellcheck: "false", rows: 16, placeholder: "Paste the AI's answer here (the JSON with generateRequest and review)." });
+  const loadExample = h("button", { class: "small", type: "button" }, "Load the example answer");
+  loadExample.addEventListener("click", async () => { answer.value = await (await fetch(AI_SAMPLE_ANSWER.url)).text(); });
+
+  const result = placeholder("Paste an answer and press the button to see what Fakturum makes of it.");
+  const btn = h("button", { class: "primary", type: "button" }, "Check and generate XRechnung");
+  btn.addEventListener("click", async () => {
+    let parsed;
+    try {
+      parsed = parseAIAnswer(answer.value);
+    } catch (e) {
+      result.replaceChildren(h("div", { class: "verdict invalid" }, "Not readable"), h("p", { class: "meta" }, String(e.message || e)));
+      return;
+    }
+    const review = reviewView(parsed.review);
+    if (!parsed.request) {
+      result.replaceChildren(h("div", { class: "verdict info" }, "NOT CONVERTED"),
+        h("p", { class: "meta" }, "The AI found something this conversion can't carry (see below). Nothing was sent to Fakturum."), ...review);
+      return;
+    }
+    btn.disabled = true;
+    const res = await call("POST", "/generate", { json: parsed.request });
+    const view = validationView("POST", "/generate", res);
+    if (res.status === 200 && res.body && res.body.document) {
+      if (res.body.errors.length || res.body.warnings.length) {
+        const copy = h("button", { class: "small", type: "button" }, "Copy follow-up for the AI");
+        copy.addEventListener("click", async () => {
+          await navigator.clipboard.writeText(followUp(res.body));
+          copy.textContent = "Copied ✓";
+        });
+        view.push(h("div", { class: "row" }, copy,
+          h("span", { class: "hint" }, "Paste it into the same chat: the AI fixes what the PDF supports and lists the rest.")));
+      }
+      view.push(h("h2", { style: "margin-top:14px" }, "Generated document"));
+      view.push(xmlResultBox(b64ToBytes(res.body.document), `xrechnung-${(parsed.request.invoice && parsed.request.invoice.number) || "generated"}.xml`));
+    }
+    result.replaceChildren(...review, h("hr"), ...view);
+    btn.disabled = false;
+  });
+
+  const steps = card("1 · Give your AI assistant the PDF and the prompt",
+    h("p", { class: "hint" },
+      "Any assistant that reads PDFs works (ChatGPT, Claude, Gemini, Copilot, or a model you run yourself). Attach the invoice PDF, paste the prompt, send. " +
+      "It answers with the request for /generate plus a review: what it found, what it converted, and what the invoice doesn't say."),
+    h("div", { class: "row" }, copyPrompt,
+      h("button", { class: "small", type: "button", onclick: async () => download(await promptText, "fakturum-ai-prompt.md", "text/markdown") }, "Download prompt"),
+      h("button", { class: "small", type: "button", onclick: async () => download(new Uint8Array(await (await fetch(AI_SAMPLE_PDF.url)).arrayBuffer()), AI_SAMPLE_PDF.name, "application/pdf") }, "Sample PDF to try")),
+    h("details", {}, h("summary", {}, "Show the prompt"), promptPre),
+    h("p", { class: "note" },
+      "Data protection: the PDF goes to your AI provider, not through this page and not to Fakturum's makers. " +
+      "Use a provider your data protection rules allow for invoices (a data processing agreement, or a local model). " +
+      "If the PDF already is a ZUGFeRD / Factur-X e-invoice, you don't need an AI: validate it in the Validate tab."),
+    h("h2", { style: "margin-top:16px" }, "2 · Paste the AI's answer"),
+    h("div", { class: "row" }, loadExample, h("span", { class: "hint" }, "(what a correct answer for the sample PDF looks like)")),
+    answer,
+    h("div", { class: "row", style: "margin-top:10px" }, btn));
+
+  return h("div", {},
+    grid(steps, card("3 · Check the result", result,
+      h("p", { class: "hint" }, "The AI only types the data in; Fakturum checks it against the official XRechnung rules. Read the review before you send the invoice: a person stays responsible for its content."))),
+    codeCard("ai"));
+}
+
 // A store-only ZIP writer (no compression), enough to hand the batch endpoint a ZIP.
 const CRC_TABLE = (() => {
   const t = new Uint32Array(256);
@@ -571,6 +735,7 @@ const TABS = [
   { id: "validate", title: "Validate", needs: "free", build: validateTab },
   { id: "convert", title: "Convert", needs: "pro", build: convertTab },
   { id: "generate", title: "Generate", needs: "pro", build: generateTab },
+  { id: "ai", title: "PDF → XRechnung (AI)", needs: "pro", build: aiTab },
   { id: "batch", title: "Batch", needs: "business", build: batchTab },
 ];
 

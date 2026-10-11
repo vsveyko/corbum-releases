@@ -39,7 +39,7 @@ Pro und Business können.
 | XRechnung UBL & CII validieren | ✓ | ✓ |
 | ZUGFeRD- / Factur-X-PDFs validieren | ✓ | ✓ |
 | UBL ⇄ CII konvertieren | ✓ | ✓ |
-| XRechnung aus JSON erzeugen | ✓ | ✓ |
+| XRechnung aus JSON erzeugen – auch ohne Umsatzsteuer (Kleinunternehmer nach § 19 UStG, Reverse Charge) | ✓ | ✓ |
 | Stapelverarbeitung per ZIP (bis 5.000 Dateien, CSV-Bericht) | | ✓ |
 
 Pro und Business sind dasselbe Image. Welcher Plan aktiv ist, entscheidet
@@ -82,6 +82,13 @@ erzeugen und als Stapel verarbeiten – mit dem passenden curl-, Python- und
 Node.js-Code zum Kopieren. Alles bleibt auf Ihrem Rechner;
 `docker compose up -d` genügt (die Seite ist englisch).
 
+Neu ab 1.0.14: **aus einer normalen PDF-Rechnung eine XRechnung machen** – mit
+Ihrem eigenen KI-Assistenten. Die Demo liefert den Prompt dafür; die KI liest
+die PDF, Fakturum erzeugt daraus die XRechnung und prüft sie gegen die
+offiziellen Regeln. Die KI ist angewiesen, Fehlendes zu melden statt es zu
+erfinden – die Prüfung durch Fakturum und ein Blick auf ihren Bericht bleiben
+trotzdem Pflicht.
+
 ## Sicherheit und Betrieb
 
 - **Keine eingebaute Authentifizierung.** Betreiben Sie den Container im
@@ -122,12 +129,13 @@ on your own servers – no cloud, no subscription, no per-document fees.
 - **Try it free** – XML validation (XRechnung UBL and CII, same official rules) is free with no limits, no license, no sign-up: `docker run -d -p 8080:8080 vsveyko/corbum-fakturum-api:free`, then open `http://localhost:8080/docs`.
 - **Safe to operate** – runs as non-root, makes no outbound connections, processes documents in memory only and never logs them. There is no built-in authentication: run it on a private network behind your own gateway. From 1.0.10 the image contains nothing but the program (no OS, no shell), is protected against oversized and hostile documents, and every release ships `SHA256SUMS`, an SBOM and `RUNNING.md`. Report vulnerabilities privately – see `SECURITY.md` in this repository.
 - **Try it locally** – the `demo-fakturum` folder holds a small demo page that runs next to your own container (validate, convert, generate, batch, with copyable curl/Python/Node.js code); `docker compose up -d` is all it takes.
+- **New in 1.0.14: from an ordinary PDF invoice to an XRechnung with your own AI assistant** – the demo provides the prompt; the AI reads the PDF, Fakturum generates the XRechnung and checks it against the official rules. The AI is instructed to report what the invoice doesn't show instead of inventing it; Fakturum's check and a look at the AI's report are still a must.
 
 | | Pro | Business |
 | --- | :---: | :---: |
 | XRechnung UBL & CII validation | ✓ | ✓ |
 | ZUGFeRD / Factur-X PDF validation | ✓ | ✓ |
-| Convert UBL ⇄ CII, generate XRechnung from JSON | ✓ | ✓ |
+| Convert UBL ⇄ CII, generate XRechnung from JSON – also without VAT (German small businesses under § 19 UStG, reverse charge) | ✓ | ✓ |
 | Batch processing via ZIP (up to 5,000 files, CSV report) | | ✓ |
 
 **For developers and integrators:** a clean OpenAPI 3 contract with Swagger UI in every container, errors with official rule IDs and document positions, `/health` and `/license/status` for operations – and a partner program for system integrators who use Fakturum in client projects. Technical questions are answered directly by Fakturum's developer.

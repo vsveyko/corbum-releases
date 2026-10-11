@@ -55,7 +55,7 @@ Unter **Releases** die Datei für Ihren Server herunterladen –
 Apple Silicon). Danach ist alles gleich:
 
 ```bash
-docker load < fakturum-paid-<version>-amd64.tar.gz
+docker load -i fakturum-paid-<version>-amd64.tar.gz
 
 docker run -d -p 8080:8080 \
   -v /pfad/zur/license.json:/app/license.json:ro \

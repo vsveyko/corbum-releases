@@ -158,6 +158,49 @@ function xmlResultBox(xmlBytes, filename) {
     h("pre", {}, shorten(text)));
 }
 
+// "Embed into your PDF" (POST /embed): the generated XML plus the user's own
+// PDF/A become a ZUGFeRD / Factur-X PDF. A refusal explains itself (what,
+// why, how to fix, findings); CONTENT_NOT_COMPARED is shown as a prominent
+// block, never as small print.
+function embedBox(xmlB64, baseName) {
+  const file = h("input", { type: "file", accept: ".pdf,application/pdf" });
+  const btn = h("button", { class: "small", type: "button", disabled: true }, "Embed into my PDF");
+  const out = h("div", {});
+  file.addEventListener("change", () => { btn.disabled = !file.files[0]; });
+  btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    const pdf = new Uint8Array(await file.files[0].arrayBuffer());
+    const res = await call("POST", "/embed", { json: { pdf: bytesToB64(pdf), xml: xmlB64 } });
+    const b = res.body;
+    if (res.status === 200 && b && b.document) {
+      const name = (file.files[0].name.replace(/\.pdf$/i, "") || baseName) + "-zugferd.pdf";
+      out.replaceChildren(
+        statusLine("POST", "/embed", res),
+        h("div", { class: "verdict valid" }, "EMBEDDED"),
+        h("p", { class: "meta" }, `${b.embeddedFileName} · ${b.conformanceLevel} · your PDF/A-${b.pdfaInput} is now PDF/A-3` + (b.convertedFromUbl ? " · UBL converted to CII" : "")),
+        ...b.notices.filter((n) => n.code === "CONTENT_NOT_COMPARED").map((n) => h("div", { class: "notice-block" }, h("strong", {}, "Not compared: "), n.message)),
+        h("div", { class: "row" }, h("button", { class: "primary", type: "button", onclick: () => download(b64ToBytes(b.document), name, "application/pdf") }, "Download " + name)),
+        h("p", { class: "hint" }, "Check it any time in the Validate tab: it reads the invoice back out of the PDF."));
+    } else if (b && b.error && b.error.reason) {
+      out.replaceChildren(
+        statusLine("POST", "/embed", res),
+        h("div", { class: "verdict invalid" }, b.error.message),
+        h("p", {}, h("strong", {}, "Why: "), b.error.reason),
+        b.error.findings && b.error.findings.length ? h("ul", { class: "review warn" }, b.error.findings.map((f) => h("li", {}, f))) : null,
+        h("strong", {}, "What to do:"),
+        h("ol", { class: "review" }, b.error.fix.map((f) => h("li", {}, f))));
+    } else {
+      out.replaceChildren(statusLine("POST", "/embed", res), ...errorView(res));
+    }
+    btn.disabled = false;
+  });
+  return h("div", { class: "embed-box" },
+    h("h2", {}, "Embed into your PDF (ZUGFeRD / Factur-X)"),
+    h("p", { class: "hint" }, "Choose the invoice PDF people read. It must be saved as PDF/A (Word: \"PDF/A compliant\"; LibreOffice: \"Archive (PDF/A)\"). Fakturum adds the XML to it and changes nothing else."),
+    h("div", { class: "row" }, file, btn),
+    out);
+}
+
 // ---------- code snippets ----------
 
 function snippetBox(snips) {
@@ -467,6 +510,7 @@ function generateTab() {
     if (res.status === 200 && res.body && res.body.document) {
       view.push(h("h2", { style: "margin-top:14px" }, "Generated document"));
       view.push(xmlResultBox(b64ToBytes(res.body.document), "xrechnung-generated.xml"));
+      view.push(embedBox(res.body.document, "invoice"));
     }
     result.replaceChildren(...view);
     btn.disabled = false;
@@ -561,6 +605,7 @@ function aiTab() {
       }
       view.push(h("h2", { style: "margin-top:14px" }, "Generated document"));
       view.push(xmlResultBox(b64ToBytes(res.body.document), `xrechnung-${(parsed.request.invoice && parsed.request.invoice.number) || "generated"}.xml`));
+      view.push(embedBox(res.body.document, (parsed.request.invoice && parsed.request.invoice.number) || "invoice"));
     }
     result.replaceChildren(...review, h("hr"), ...view);
     btn.disabled = false;

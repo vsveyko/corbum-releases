@@ -114,6 +114,14 @@ against the official rules. A person checks what the AI wasn't sure about.
      for the same chat. The AI then fixes what the PDF supports and lists the
      rest.
 
+After generating, **Embed into your PDF** turns your own invoice PDF into a
+ZUGFeRD / Factur-X PDF: choose the PDF, and Fakturum adds the XRechnung to it
+without changing anything else. The PDF must be saved as PDF/A (Word: "PDF/A
+compliant" when saving as PDF; LibreOffice: "Archive (PDF/A)"); if it isn't,
+the page says why and what to do. Fakturum does not compare the PDF with the
+XML — the page shows that next to the download, every time. (The same box is
+in the Generate tab.)
+
 The answer has two parts: `generateRequest`, which is exactly the body for
 `POST /generate`, and `review`. The "Use it in your code" box shows how to
 automate the same round trip.

@@ -40,6 +40,7 @@ Pro und Business können.
 | ZUGFeRD- / Factur-X-PDFs validieren | ✓ | ✓ |
 | UBL ⇄ CII konvertieren | ✓ | ✓ |
 | XRechnung aus JSON erzeugen – auch ohne Umsatzsteuer (Kleinunternehmer nach § 19 UStG, Reverse Charge) | ✓ | ✓ |
+| XRechnung in Ihr eigenes PDF/A einbetten (ZUGFeRD / Factur-X) | ✓ | ✓ |
 | Stapelverarbeitung per ZIP (bis 5.000 Dateien, CSV-Bericht) | | ✓ |
 
 Pro und Business sind dasselbe Image. Welcher Plan aktiv ist, entscheidet
@@ -89,6 +90,12 @@ offiziellen Regeln. Die KI ist angewiesen, Fehlendes zu melden statt es zu
 erfinden – die Prüfung durch Fakturum und ein Blick auf ihren Bericht bleiben
 trotzdem Pflicht.
 
+Neu ab 1.0.15: **die XRechnung in Ihre eigene PDF-Rechnung einbetten.** Ihre
+PDF – als PDF/A gespeichert (in Word: Optionen → „PDF/A-kompatibel“) – wird
+zur ZUGFeRD-/Factur-X-Rechnung, sonst bleibt sie unverändert. Geprüft mit dem
+Referenz-Validator für ZUGFeRD (Mustang, darin veraPDF). Fakturum vergleicht
+dabei nicht den Text der PDF mit der XRechnung – darauf weist jede Antwort hin.
+
 ## Sicherheit und Betrieb
 
 - **Keine eingebaute Authentifizierung.** Betreiben Sie den Container im
@@ -130,12 +137,14 @@ on your own servers – no cloud, no subscription, no per-document fees.
 - **Safe to operate** – runs as non-root, makes no outbound connections, processes documents in memory only and never logs them. There is no built-in authentication: run it on a private network behind your own gateway. From 1.0.10 the image contains nothing but the program (no OS, no shell), is protected against oversized and hostile documents, and every release ships `SHA256SUMS`, an SBOM and `RUNNING.md`. Report vulnerabilities privately – see `SECURITY.md` in this repository.
 - **Try it locally** – the `demo-fakturum` folder holds a small demo page that runs next to your own container (validate, convert, generate, batch, with copyable curl/Python/Node.js code); `docker compose up -d` is all it takes.
 - **New in 1.0.14: from an ordinary PDF invoice to an XRechnung with your own AI assistant** – the demo provides the prompt; the AI reads the PDF, Fakturum generates the XRechnung and checks it against the official rules. The AI is instructed to report what the invoice doesn't show instead of inventing it; Fakturum's check and a look at the AI's report are still a must.
+- **New in 1.0.15: embed the XRechnung into your own invoice PDF** – saved as PDF/A (Word: Options → "PDF/A compliant"), it becomes a ZUGFeRD / Factur-X invoice and is otherwise unchanged. Checked with the ZUGFeRD reference validator (Mustang, which runs veraPDF). Fakturum does not compare the PDF's text with the XRechnung; every response says so.
 
 | | Pro | Business |
 | --- | :---: | :---: |
 | XRechnung UBL & CII validation | ✓ | ✓ |
 | ZUGFeRD / Factur-X PDF validation | ✓ | ✓ |
 | Convert UBL ⇄ CII, generate XRechnung from JSON – also without VAT (German small businesses under § 19 UStG, reverse charge) | ✓ | ✓ |
+| Embed the XRechnung into your own PDF/A (ZUGFeRD / Factur-X) | ✓ | ✓ |
 | Batch processing via ZIP (up to 5,000 files, CSV report) | | ✓ |
 
 **For developers and integrators:** a clean OpenAPI 3 contract with Swagger UI in every container, errors with official rule IDs and document positions, `/health` and `/license/status` for operations – and a partner program for system integrators who use Fakturum in client projects. Technical questions are answered directly by Fakturum's developer.

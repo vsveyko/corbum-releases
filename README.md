@@ -32,6 +32,10 @@ Dann `http://localhost:8080/docs` im Browser öffnen und eine Rechnung
 prüfen. Oder die lokale Demo starten (siehe unten), die zeigt auch, was
 Pro und Business können.
 
+## So funktioniert's
+
+![Fakturum in 4 Schritten: Container starten, Rechnung an /validate senden, Ergebnis mit Regel-IDs auswerten, in den Ablauf einbauen. Architektur: Ihre Software spricht per HTTP im internen Netz mit dem Fakturum-Container, die Regeln sind eingebaut, keine ausgehenden Verbindungen.](images/so-funktionierts.png)
+
 ## Pro und Business
 
 | | **Pro** | **Business** |
@@ -138,6 +142,8 @@ on your own servers – no cloud, no subscription, no per-document fees.
 - **Try it locally** – the `demo-fakturum` folder holds a small demo page that runs next to your own container (validate, convert, generate, batch, with copyable curl/Python/Node.js code); `docker compose up -d` is all it takes.
 - **New in 1.0.14: from an ordinary PDF invoice to an XRechnung with your own AI assistant** – the demo provides the prompt; the AI reads the PDF, Fakturum generates the XRechnung and checks it against the official rules. The AI is instructed to report what the invoice doesn't show instead of inventing it; Fakturum's check and a look at the AI's report are still a must.
 - **New in 1.0.15: embed the XRechnung into your own invoice PDF** – saved as PDF/A (Word: Options → "PDF/A compliant"), it becomes a ZUGFeRD / Factur-X invoice and is otherwise unchanged. Checked with the ZUGFeRD reference validator (Mustang, which runs veraPDF). Fakturum does not compare the PDF's text with the XRechnung; every response says so.
+
+![Fakturum in 4 steps: start the container, send an invoice to /validate, read the result with rule IDs, make it part of the flow. Architecture: your software talks HTTP on the internal network to the Fakturum container, rules built in, no outbound connections.](images/how-it-works.png)
 
 | | Pro | Business |
 | --- | :---: | :---: |

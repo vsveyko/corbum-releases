@@ -137,7 +137,24 @@ exemption. Add one entry per category to `invoice.taxExemptions`:
 | --- | --- |
 | Überweisung, Bankverbindung or IBAN given | `"58"` (SEPA credit transfer), plus `payeeIban` |
 | Lastschrift, "wird abgebucht", SEPA-Mandat | stop: `review.unsupported` |
-| Already paid (bezahlt, PayPal, Kreditkarte) | stop: `review.unsupported` |
+| Already paid in full (bezahlt, PayPal, Kreditkarte) | stop: `review.unsupported` |
+
+**Final invoices with advance payments** (Schlussrechnung, "abzüglich
+Abschlagszahlung", "bereits gezahlt", Anzahlung): put the **sum** of the
+payments already made into `invoice.prepaidAmount` (gross, as a number). The
+line items stay the full work, so the gross total is the whole amount and the
+payable amount is the rest. Copy what the invoice says about each payment
+(number, date, amount) into `invoice.notes`:
+
+```json
+"prepaidAmount": 1000.00,
+"notes": [
+  { "text": "Abschlagsrechnung AR-2026-003 vom 01.09.2026: 1.000,00 EUR, bezahlt am 10.09.2026" }
+]
+```
+
+Put the amount the invoice says is still to pay into `review.assumptions` so the
+person can compare it with Fakturum's result.
 
 ## 4. Check your own work before answering
 

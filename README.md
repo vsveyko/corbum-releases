@@ -136,6 +136,12 @@ zur ZUGFeRD-/Factur-X-Rechnung, sonst bleibt sie unverändert. Geprüft mit dem
 Referenz-Validator für ZUGFeRD (Mustang, darin veraPDF). Fakturum vergleicht
 dabei nicht den Text der PDF mit der XRechnung – darauf weist jede Antwort hin.
 
+Neu ab 1.0.16: **Schlussrechnungen mit Abschlagszahlungen erzeugen.** Die
+bereits gezahlte Summe (BT-113) und die Angaben zu den einzelnen Zahlungen
+(BT-22) gehen direkt in die XRechnung, der Zahlbetrag ergibt sich daraus – die
+Form, die das BMF-Schreiben vom 15.10.2026 für Endrechnungen bis 30.06.2030
+zulässt. Auch der KI-Prompt der Demo kennt diesen Fall jetzt.
+
 ## Sicherheit und Betrieb
 
 - **Keine eingebaute Authentifizierung.** Betreiben Sie den Container im
@@ -152,6 +158,25 @@ dabei nicht den Text der PDF mit der XRechnung – darauf weist jede Antwort hin
   Speicher-Empfehlungen und allen Einstellungen.
 - **Schwachstelle gefunden?** Bitte nicht öffentlich melden – siehe die
   Datei `SECURITY.md` in diesem Repository.
+
+## Umfang und Grenzen
+
+- **Geprüft wird** gegen XSD, EN-16931- und XRechnung-Regeln in genau den
+  Versionen, die jede Antwort im Feld `metadata` nennt. Ab Version 1.0.16
+  kommen Warnungen für USt-IdNr. hinzu, die offline erkennbar fehlerhaft
+  sind (Form oder Prüfziffer, EU-Länder). Ob eine Nummer registriert ist,
+  sagt nur VIES – das ist ein Online-Dienst, der Container baut keine
+  Verbindungen nach außen auf.
+- **Nicht geprüft werden** Regeln einzelner Bundesländer oder bestimmter
+  Empfänger, neuere XRechnung-Versionen als in `metadata` genannt, der
+  Wahrheitsgehalt der Angaben und ob der Empfänger das Dokument
+  annimmt. Ein „gültig" bedeutet: die genannten Regeln sind eingehalten.
+- **Verantwortung** für Inhalt, steuerliche Behandlung und Annahme durch
+  den Empfänger bleibt bei Ihnen. Fakturum hilft, Fehler vor dem Versand
+  zu finden.
+- **Nachvollziehbar:** gleiche Version, gleiches Ergebnis. Speichern Sie
+  Image-Tag und `metadata` zu jedem Ergebnis, auf das Sie sich verlassen.
+  Einzelheiten stehen in `RUNNING.md`.
 
 ## Updates
 
@@ -184,9 +209,11 @@ on your own servers – no cloud, no subscription, no per-document fees.
 
   The answer is `"valid": false` with rule `BR-DE-15` (buyer reference missing) – an invalid invoice is a normal result, not an HTTP error. API reference: `http://localhost:8080/docs`; stop with `docker rm -f fakturum`. The port is bound to `127.0.0.1` because Fakturum has no built-in authentication. On macOS use `base64 -i` instead of `base64 -w0`.
 - **Safe to operate** – runs as non-root, makes no outbound connections, processes documents in memory only and never logs them. There is no built-in authentication: run it on a private network behind your own gateway. From 1.0.10 the image contains nothing but the program (no OS, no shell), is protected against oversized and hostile documents, and every release ships `SHA256SUMS`, an SBOM and `RUNNING.md`. Report vulnerabilities privately – see `SECURITY.md` in this repository.
+- **Scope and limits** – checked against XSD, EN 16931 and XRechnung rules in exactly the versions each response names in `metadata`. From 1.0.16, VAT IDs that are visibly malformed offline (shape or check digit, EU countries) get a warning; whether a number is registered is for VIES, an online service this container never contacts. Not checked: rules of individual German states or recipients, newer XRechnung versions, whether the content is true, whether the recipient accepts the document. The content and its acceptance stay with you; store the image tag and `metadata` with each result you rely on. Details in `RUNNING.md`.
 - **Try it locally** – the `demo-fakturum` folder holds a small demo page that runs next to your own container (validate, convert, generate, batch, with copyable curl/Python/Node.js code); `docker compose up -d` is all it takes.
 - **New in 1.0.14: from an ordinary PDF invoice to an XRechnung with your own AI assistant** – the demo provides the prompt; the AI reads the PDF, Fakturum generates the XRechnung and checks it against the official rules. The AI is instructed to report what the invoice doesn't show instead of inventing it; Fakturum's check and a look at the AI's report are still a must.
 - **New in 1.0.15: embed the XRechnung into your own invoice PDF** – saved as PDF/A (Word: Options → "PDF/A compliant"), it becomes a ZUGFeRD / Factur-X invoice and is otherwise unchanged. Checked with the ZUGFeRD reference validator (Mustang, which runs veraPDF). Fakturum does not compare the PDF's text with the XRechnung; every response says so.
+- **New in 1.0.16: final invoices that deduct advance payments** – the sum already paid (BT-113) and the details of each payment (BT-22) go straight into the XRechnung, and the payable amount follows from them: the form the German Federal Ministry of Finance's letter of 15 Oct 2026 accepts for final invoices until 30 June 2030. The demo's AI prompt handles this case too.
 
 ![Fakturum in 4 steps: start the container, send an invoice to /validate, read the result with rule IDs, make it part of the flow. Architecture: your software talks HTTP on the internal network to the Fakturum container, rules built in, no outbound connections.](images/how-it-works.png)
 

@@ -25,27 +25,63 @@ Die XML-Prüfung (XRechnung UBL und CII, mit denselben offiziellen Regeln)
 ist kostenlos und ohne Limits – ohne Lizenz, ohne Registrierung:
 
 ```bash
-docker run -d -p 8080:8080 vsveyko/corbum-fakturum-api:free
+docker run -d --name fakturum -p 127.0.0.1:8080:8080 vsveyko/corbum-fakturum-api:free
 ```
 
-Dann `http://localhost:8080/docs` im Browser öffnen und eine Rechnung
-prüfen. Oder die lokale Demo starten (siehe unten), die zeigt auch, was
-Pro und Business können.
+Eine Beispielrechnung mit absichtlichem Fehler (die Käuferreferenz fehlt)
+holen und prüfen:
+
+```bash
+curl -sO https://raw.githubusercontent.com/vsveyko/corbum-releases/main/demo-fakturum/www/samples/invalid-no-buyer-reference.xml
+curl -s -X POST http://localhost:8080/validate -H "Content-Type: application/json" \
+  -d "{\"document\":\"$(base64 -w0 invalid-no-buyer-reference.xml)\",\"format\":\"auto\"}"
+```
+
+Antwort (gekürzt) – eine ungültige Rechnung ist ein normales Ergebnis, kein HTTP-Fehler:
+
+```json
+{
+  "status": "invalid",
+  "valid": false,
+  "errors": [
+    {
+      "code": "BR-DE-15",
+      "message": "[BR-DE-15] Das Element \"Buyer reference\" (BT-10) muss übermittelt werden.",
+      "businessTerm": "BT-10"
+    }
+  ]
+}
+```
+
+Eine gültige Vergleichsrechnung: `valid-ubl.xml` aus demselben Ordner. Die
+vollständige API-Referenz: `http://localhost:8080/docs`. Beenden:
+`docker rm -f fakturum`.
+
+- Der Port ist nur auf dem eigenen Rechner erreichbar (`127.0.0.1`) – Fakturum
+  hat keine eingebaute Anmeldung.
+- macOS: `base64 -i invalid-no-buyer-reference.xml` statt `base64 -w0 …`.
+- Jede Version gibt es auch als festen Tag `<version>-free` (siehe Docker
+  Hub), für reproduzierbare Tests.
+- Die lokale Demo (siehe unten) zeigt im Browser auch, was Pro und Business
+  können.
 
 ## So funktioniert's
 
 ![Fakturum in 4 Schritten: Container starten, Rechnung an /validate senden, Ergebnis mit Regel-IDs auswerten, in den Ablauf einbauen. Architektur: Ihre Software spricht per HTTP im internen Netz mit dem Fakturum-Container, die Regeln sind eingebaut, keine ausgehenden Verbindungen.](images/so-funktionierts.png)
 
-## Pro und Business
+## Free, Pro und Business
 
-| | **Pro** | **Business** |
-| --- | :---: | :---: |
-| XRechnung UBL & CII validieren | ✓ | ✓ |
-| ZUGFeRD- / Factur-X-PDFs validieren | ✓ | ✓ |
-| UBL ⇄ CII konvertieren | ✓ | ✓ |
-| XRechnung aus JSON erzeugen – auch ohne Umsatzsteuer (Kleinunternehmer nach § 19 UStG, Reverse Charge) | ✓ | ✓ |
-| XRechnung in Ihr eigenes PDF/A einbetten (ZUGFeRD / Factur-X) | ✓ | ✓ |
-| Stapelverarbeitung per ZIP (bis 5.000 Dateien, CSV-Bericht) | | ✓ |
+| | **Free** | **Pro** | **Business** |
+| --- | :---: | :---: | :---: |
+| XRechnung UBL & CII validieren | ✓ | ✓ | ✓ |
+| ZUGFeRD- / Factur-X-PDFs validieren | | ✓ | ✓ |
+| UBL ⇄ CII konvertieren | | ✓ | ✓ |
+| XRechnung aus JSON erzeugen – auch ohne Umsatzsteuer (Kleinunternehmer nach § 19 UStG, Reverse Charge) | | ✓ | ✓ |
+| XRechnung in Ihr eigenes PDF/A einbetten (ZUGFeRD / Factur-X) | | ✓ | ✓ |
+| Stapelverarbeitung per ZIP (bis 5.000 Dateien, CSV-Bericht) | | | ✓ |
+
+Free gibt es auf Docker Hub (`vsveyko/corbum-fakturum-api:free`), ohne Lizenz
+und ohne Mengengrenze.
 
 Pro und Business sind dasselbe Image. Welcher Plan aktiv ist, entscheidet
 die signierte Lizenzdatei, die Sie von einem unserer Vertriebspartner
@@ -137,7 +173,16 @@ on your own servers – no cloud, no subscription, no per-document fees.
 - **One small container** – static Go binary, `linux/amd64` and `linux/arm64`.
 - **No quotas** and a **perpetual license** – no subscription, patches within your version included forever.
 - **Swagger UI built in** at `/docs`.
-- **Try it free** – XML validation (XRechnung UBL and CII, same official rules) is free with no limits, no license, no sign-up: `docker run -d -p 8080:8080 vsveyko/corbum-fakturum-api:free`, then open `http://localhost:8080/docs`.
+- **Try it free** – XML validation (XRechnung UBL and CII, same official rules) is free with no limits, no license, no sign-up. Start it, fetch a sample with a deliberate error and validate it:
+
+  ```bash
+  docker run -d --name fakturum -p 127.0.0.1:8080:8080 vsveyko/corbum-fakturum-api:free
+  curl -sO https://raw.githubusercontent.com/vsveyko/corbum-releases/main/demo-fakturum/www/samples/invalid-no-buyer-reference.xml
+  curl -s -X POST http://localhost:8080/validate -H "Content-Type: application/json" \
+    -d "{\"document\":\"$(base64 -w0 invalid-no-buyer-reference.xml)\",\"format\":\"auto\"}"
+  ```
+
+  The answer is `"valid": false` with rule `BR-DE-15` (buyer reference missing) – an invalid invoice is a normal result, not an HTTP error. API reference: `http://localhost:8080/docs`; stop with `docker rm -f fakturum`. The port is bound to `127.0.0.1` because Fakturum has no built-in authentication. On macOS use `base64 -i` instead of `base64 -w0`.
 - **Safe to operate** – runs as non-root, makes no outbound connections, processes documents in memory only and never logs them. There is no built-in authentication: run it on a private network behind your own gateway. From 1.0.10 the image contains nothing but the program (no OS, no shell), is protected against oversized and hostile documents, and every release ships `SHA256SUMS`, an SBOM and `RUNNING.md`. Report vulnerabilities privately – see `SECURITY.md` in this repository.
 - **Try it locally** – the `demo-fakturum` folder holds a small demo page that runs next to your own container (validate, convert, generate, batch, with copyable curl/Python/Node.js code); `docker compose up -d` is all it takes.
 - **New in 1.0.14: from an ordinary PDF invoice to an XRechnung with your own AI assistant** – the demo provides the prompt; the AI reads the PDF, Fakturum generates the XRechnung and checks it against the official rules. The AI is instructed to report what the invoice doesn't show instead of inventing it; Fakturum's check and a look at the AI's report are still a must.
